@@ -1,0 +1,20 @@
+GPIO Inputs: (26)
+GPIO Outputs: (5,6,13,19)
+
+---
+### Listen to the feedback msgs
+mosquitto_sub -h iothub.local -p 8883 -u rio0_user2 -P test -q 2 --cafile /PATH_OF_ROOT_PUB_CERT/ROOT_CA_1.pem -t io_info/# | ts '[%.T]'
+
+---
+### Get all inputs states
+time mosquitto_pub -h iothub.local -p 8883 -u rio0_user1 -P test -q 2 --cafile /PATH_OF_ROOT_PUB_CERT/ROOT_CA_1.pem -t io_info/g_0/get/i/all -m "s"
+
+### Get output number 5 state
+time mosquitto_pub -h iothub.local -p 8883 -u rio0_user1 -P test -q 2 --cafile /PATH_OF_ROOT_PUB_CERT/ROOT_CA_1.pem -t io_exec/g_0/o/5 -m "s"
+
+---
+### I2C - BMP180 Temperature in address 0x77:
+mosquitto_sub -h 192.168.1.123 -p 8883 -u rio0_user2 -P test -q 2 --cafile /PATH_OF_ROOT_PUB_CERT/ROOT_CA_1.pem -t io_info/# | ts '[%.T]'
+time mosquitto_pub -h 192.168.1.123 -p 8883 -u rio0_user1 -P test -q 2 --cafile /PATH_OF_ROOT_PUB_CERT/ROOT_CA_1.pem -t io_exec/g_0/i2c/77 -m "f4,2e"
+time mosquitto_pub -h 192.168.1.123 -p 8883 -u rio0_user1 -P test -q 2 --cafile /PATH_OF_ROOT_PUB_CERT/ROOT_CA_1.pem -t io_exec/g_0/i2c/77 -m "f6;2"
+time mosquitto_pub -h 192.168.1.123 -p 8883 -u rio0_user1 -P test -q 2 --cafile /PATH_OF_ROOT_PUB_CERT/ROOT_CA_1.pem -t io_exec/g_0/i2c/77 -m "f4,2e&f6;2"

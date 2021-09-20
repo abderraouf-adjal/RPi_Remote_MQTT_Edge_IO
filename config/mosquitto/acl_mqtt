@@ -1,0 +1,34 @@
+#--  Access control for clients with no username.  --#
+topic deny $SYS/#
+topic deny #
+
+#=====================================#
+#--  Start for remote IO group "0"  --#
+## Tip: you can limit port IO type, or pin numbers.
+## For executive machine to read and write IO states to "log".
+user rio0_exec
+topic read io_exec/g_0/+/+
+topic read io_info/g_0/get/+/+
+topic write io_info/g_0/log/+/+
+
+## For privileged user(s) to get states, and control output(s) (eg. buttons).
+user rio0_user1
+topic write io_exec/g_0/o/+
+topic write io_exec/g_0/i2c/+
+#topic deny io_exec/g_0/o/all
+topic write io_info/g_0/get/+/+
+topic read io_info/g_0/log/+/+
+#topic deny io_info/g_0/log/+/PIN
+
+## For read-only user(s) to get states (eg. displays).
+user rio0_user2
+topic write io_info/g_0/get/+/+
+topic read io_info/g_0/log/+/+
+#topic deny io_info/g_0/log/+/PIN
+#--   End for remote IO group "0"   --#
+#===========================================================#
+
+#--  All clients, "%u" for username, "%c" for client-ID.  --#
+## MQTT wills arch for remote IO group "0" system:
+pattern readwrite io_info/g_0/will/%u
+topic read io_info/g_0/will/+
